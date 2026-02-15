@@ -8,9 +8,9 @@ import lombok.Setter;
 
 public class UpdateDishDTO {
     private String name;
-    private BigDecimal price;
+    private Integer price;
     private String description;
     private String imageUrl;
     private String weightVolume;
-    private Bool IsActive;
+    private Boolean IsActive;
 }

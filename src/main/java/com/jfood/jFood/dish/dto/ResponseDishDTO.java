@@ -4,21 +4,23 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 
 @Getter
 @Setter
 
 public class ResponseDishDTO {
-    @NotBlanc
+    @NotBlank
     private String name;
-    @NotBlanc
-    private BigDecimal price;
-    @NotBlanc
+    @NotBlank
+    private Integer price;
+    @NotBlank
     private String description;
-    @NotBlanc
+    @NotBlank
     private String imageUrl;
-    @NotBlanc
+    @NotBlank
     private String weightVolume;
-    @NotBlanc
-    private Bool IsActive;
+    @NotBlank
+    private Boolean IsActive;
 }

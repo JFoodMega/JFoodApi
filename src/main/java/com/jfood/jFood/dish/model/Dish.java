@@ -11,7 +11,6 @@ import java.time.OffsetDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Dish {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +27,7 @@ public class Dish {
     private String description;
 
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
+    private Integer price;
 
     @Column(name = "weight_volume", nullable = false, length = 60)
     private String weightVolume;
