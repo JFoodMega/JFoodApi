@@ -38,6 +38,8 @@ public class Dish {
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
+    private EnumDish enumDish;
+
     //@Column(name = "sort_order", nullable = false)
     //private int sortOrder = 0;
 
