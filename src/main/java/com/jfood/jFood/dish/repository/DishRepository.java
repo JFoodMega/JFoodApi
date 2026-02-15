@@ -1,8 +1,8 @@
-package com.jfood.jFood.dishes.repository;
+package com.jfood.jFood.dish.repository;
 
-import com.jfood.jFood.dishes.model.Client;
+import com.jfood.jFood.dish.model.Dish;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ClientRepository extends JpaRepository<Client,Long> {
+public interface DishRepository extends JpaRepository<Dish,Long> {
 
 }
