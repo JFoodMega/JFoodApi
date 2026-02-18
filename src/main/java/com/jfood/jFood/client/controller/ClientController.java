@@ -1,5 +1,7 @@
 package com.jfood.jFood.client.controller;
 
+import com.jfood.jFood.address.dto.AddressDto;
+import com.jfood.jFood.address.dto.UpdateAddressDto;
 import com.jfood.jFood.client.dto.CreateClientDto;
 import com.jfood.jFood.client.dto.ResponseClientDto;
 import com.jfood.jFood.client.dto.UpdateClientDto;
@@ -39,6 +41,32 @@ public class ClientController {
     @GetMapping
     public List<ResponseClientDto> getClients() {
         return clientService.getClients();
+    }
+
+    @GetMapping("/{clientId}/addresses")
+    public List<AddressDto> getClientAddresses(@PathVariable Long clientId) {
+        return clientService.getClientAddresses(clientId);
+    }
+
+    @PostMapping("/{clientId}/addresses")
+    @ResponseStatus(HttpStatus.CREATED)
+    public AddressDto addAddress(@PathVariable Long clientId,
+                                 @Valid @RequestBody UpdateAddressDto addressDto) {
+        return clientService.addAddress(clientId, addressDto);
+    }
+
+    @PatchMapping("/{clientId}/addresses/{addressId}")
+    public AddressDto updateAddress(@PathVariable Long clientId,
+                                    @PathVariable Long addressId,
+                                    @Valid @RequestBody UpdateAddressDto addressDto) {
+        return clientService.updateClientAddress(clientId, addressId, addressDto);
+    }
+
+    @DeleteMapping("/{clientId}/addresses/{addressId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAddress(@PathVariable Long clientId,
+                              @PathVariable Long addressId) {
+        clientService.deleteAddress(clientId, addressId);
     }
 
 }

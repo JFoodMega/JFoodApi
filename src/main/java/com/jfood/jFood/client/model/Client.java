@@ -1,6 +1,7 @@
 package com.jfood.jFood.client.model;
 
 
+import com.jfood.jFood.address.model.Address;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,8 +35,8 @@ public class Client {
     @Column(nullable = false)
     private String phone;
 
-    //@OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    //private List<Address> addresses = new ArrayList<>();
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Address> addresses = new ArrayList<>();
 
     //@OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     //private List<Order> orders = new ArrayList<>();
