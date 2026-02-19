@@ -17,5 +17,5 @@ public interface AddressMapper {
     UpdateAddressDto mapToUpdateAddressDto(Address address);
 
     @Mapping(target = "id", ignore = true)
-    void updateAddressFromDto(UpdateAddressDto dto,@MappingTarget Address address);
+    void updateAddressFromDto(UpdateAddressDto dto, @MappingTarget Address address);
 }

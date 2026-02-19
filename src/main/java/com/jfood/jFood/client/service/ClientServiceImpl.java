@@ -6,6 +6,7 @@ import com.jfood.jFood.address.mapper.AddressMapper;
 import com.jfood.jFood.address.model.Address;
 import com.jfood.jFood.address.repository.AddressRepository;
 import com.jfood.jFood.client.dto.CreateClientDto;
+import com.jfood.jFood.client.dto.LogInClientDto;
 import com.jfood.jFood.client.dto.ResponseClientDto;
 import com.jfood.jFood.client.dto.UpdateClientDto;
 import com.jfood.jFood.client.mapper.ClientMapper;
@@ -13,7 +14,6 @@ import com.jfood.jFood.client.model.Client;
 import com.jfood.jFood.client.repository.ClientRepository;
 import com.jfood.jFood.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +31,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional
-    public ResponseClientDto createClient(CreateClientDto createClientDto){
+    public ResponseClientDto createClient(CreateClientDto createClientDto) {
         Client clientEntity = mapper.mapCreateClientDtoToClient(createClientDto);
 
         Client savedClient = clientRepository.save(clientEntity);
@@ -41,7 +41,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<ResponseClientDto> getClients(){
+    public List<ResponseClientDto> getClients() {
         List<Client> clients = clientRepository.findAll();
 
         return clients.stream()
@@ -51,7 +51,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional
-    public void deleteClient(Long clientId){
+    public void deleteClient(Long clientId) {
         Client client = clientRepository.findById(clientId).orElseThrow(() -> new NotFoundException("Client with id=" + clientId + " was not found"));
         clientRepository.delete(client);
     }
@@ -122,4 +122,23 @@ public class ClientServiceImpl implements ClientService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public ResponseClientDto login(LogInClientDto dto) {
+        Client client = clientRepository.findByLogin(dto.getLogin())
+                .orElseThrow(() -> new NotFoundException("Wrong login or password"));
+
+        if (!client.getPassword().equals(dto.getPassword())) {
+            throw new NotFoundException("Wrong login or password");
+        }
+
+        ResponseClientDto response = mapper.mapClientToResponseClientDto(client);
+
+        response.setAddresses(
+                client.getAddresses().stream()
+                        .map(addressMapper::mapToAddressDto)
+                        .toList()
+        );
+
+        return response;
+    }
 }

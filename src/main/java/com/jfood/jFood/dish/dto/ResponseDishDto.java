@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResponseDishDto {
+
     @NotBlank
     private String name;
     @NotBlank
@@ -17,6 +18,4 @@ public class ResponseDishDto {
     private String imageUrl;
     @NotBlank
     private String weightVolume;
-    @NotBlank
-    private Boolean IsActive;
 }

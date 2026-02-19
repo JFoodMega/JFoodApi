@@ -18,14 +18,14 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class DishServiceImpl implements DishSrevice{
+public class DishServiceImpl implements DishSrevice {
     private final DishRepository dishRepository;
     DishMapper mapper = Mappers.getMapper(DishMapper.class);
 
 
     @Override
     @Transactional
-    public ResponseDishDto createDish(CreateDishDto createDishDto){
+    public ResponseDishDto createDish(CreateDishDto createDishDto) {
         Dish dishEntity = mapper.mapCreateDishDtoToDish(createDishDto);
 
         Dish savedDish = dishRepository.save(dishEntity);
@@ -34,7 +34,7 @@ public class DishServiceImpl implements DishSrevice{
     }
 
     @Override
-    public List<ResponseDishDto> getDishes(){
+    public List<ResponseDishDto> getDishes() {
         List<Dish> dishes = dishRepository.findAll();
 
         return dishes.stream()
@@ -44,7 +44,7 @@ public class DishServiceImpl implements DishSrevice{
 
     @Override
     @Transactional
-    public void deleteDish(Long dishId){
+    public void deleteDish(Long dishId) {
         Dish dish = dishRepository.findById(dishId).orElseThrow(() -> new NotFoundException("Dish with id=" + dishId + " was not found"));
         dishRepository.delete(dish);
     }

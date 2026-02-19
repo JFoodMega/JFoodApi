@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/dish")
+@RequestMapping("/dishes")
 @RequiredArgsConstructor
 public class DishController {
     private final DishSrevice dishService;

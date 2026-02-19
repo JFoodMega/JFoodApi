@@ -9,7 +9,6 @@ import lombok.Setter;
 public class CreateDishDto {
     @NotBlank
     private String name;
-    @NotBlank
     private Integer price;
     @NotBlank
     private String description;
@@ -17,6 +16,4 @@ public class CreateDishDto {
     private String imageUrl;
     @NotBlank
     private String weightVolume;
-    @NotBlank
-    private Boolean IsActive;
 }

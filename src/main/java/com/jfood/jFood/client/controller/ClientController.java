@@ -3,6 +3,7 @@ package com.jfood.jFood.client.controller;
 import com.jfood.jFood.address.dto.AddressDto;
 import com.jfood.jFood.address.dto.UpdateAddressDto;
 import com.jfood.jFood.client.dto.CreateClientDto;
+import com.jfood.jFood.client.dto.LogInClientDto;
 import com.jfood.jFood.client.dto.ResponseClientDto;
 import com.jfood.jFood.client.dto.UpdateClientDto;
 import com.jfood.jFood.client.service.ClientService;
@@ -68,5 +69,12 @@ public class ClientController {
                               @PathVariable Long addressId) {
         clientService.deleteAddress(clientId, addressId);
     }
+
+    @PostMapping("/login")
+    public ResponseClientDto login(@Valid @RequestBody LogInClientDto dto) {
+        return clientService.login(dto);
+    }
+
+
 
 }

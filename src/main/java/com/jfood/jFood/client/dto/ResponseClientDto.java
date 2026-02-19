@@ -1,5 +1,6 @@
 package com.jfood.jFood.client.dto;
 
+import com.jfood.jFood.address.dto.AddressDto;
 import com.jfood.jFood.address.model.Address;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -20,7 +21,7 @@ public class ResponseClientDto {
     @NotBlank
     private String name;
 
-    private List<Address> addresses = new ArrayList<>();
+    private List<AddressDto> addresses = new ArrayList<>();
 
     //private List<Order> orders = new ArrayList<>();
 }

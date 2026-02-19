@@ -14,6 +14,7 @@ public interface DishMapper {
     Dish mapCreateDishDtoToDish(CreateDishDto createDishDTO);
 
     ResponseDishDto mapDishToResponseDishDto(Dish dish);
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateDishFromDto(UpdateDishDto dto, @MappingTarget Dish dish);
 

@@ -1,5 +1,6 @@
 package com.jfood.jFood.address.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jfood.jFood.client.model.Client;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -33,5 +34,6 @@ public class Address {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
+    @JsonIgnore
     private Client client;
 }

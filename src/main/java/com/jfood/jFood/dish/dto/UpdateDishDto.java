@@ -12,5 +12,4 @@ public class UpdateDishDto {
     private String description;
     private String imageUrl;
     private String weightVolume;
-    private Boolean IsActive;
 }

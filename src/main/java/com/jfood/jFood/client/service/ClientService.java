@@ -3,6 +3,7 @@ package com.jfood.jFood.client.service;
 import com.jfood.jFood.address.dto.AddressDto;
 import com.jfood.jFood.address.dto.UpdateAddressDto;
 import com.jfood.jFood.client.dto.CreateClientDto;
+import com.jfood.jFood.client.dto.LogInClientDto;
 import com.jfood.jFood.client.dto.ResponseClientDto;
 import com.jfood.jFood.client.dto.UpdateClientDto;
 
@@ -25,5 +26,7 @@ public interface ClientService {
 
 
     List<AddressDto> getClientAddresses(Long clientId);
+
+    ResponseClientDto login(LogInClientDto dto);
 
 }
