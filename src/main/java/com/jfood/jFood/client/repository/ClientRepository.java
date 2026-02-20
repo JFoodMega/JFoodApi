@@ -3,6 +3,8 @@ package com.jfood.jFood.client.repository;
 import com.jfood.jFood.client.model.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ClientRepository extends JpaRepository<Client,Long> {
+import java.util.Optional;
 
+public interface ClientRepository extends JpaRepository<Client, Long> {
+    Optional<Client> findByLogin(String login);
 }

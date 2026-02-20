@@ -1,8 +1,8 @@
 package com.jfood.jFood.dish.service;
 
-import com.jfood.jFood.dish.dto.CreateDishDTO;
-import com.jfood.jFood.dish.dto.ResponseDishDTO;
-import com.jfood.jFood.dish.dto.UpdateDishDTO;
+import com.jfood.jFood.dish.dto.CreateDishDto;
+import com.jfood.jFood.dish.dto.ResponseDishDto;
+import com.jfood.jFood.dish.dto.UpdateDishDto;
 import com.jfood.jFood.dish.mapper.DishMapper;
 import com.jfood.jFood.dish.model.Dish;
 import com.jfood.jFood.dish.repository.DishRepository;
@@ -18,15 +18,14 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class DishServiceImpl implements DishService{
-
+public class DishServiceImpl implements DishSrevice {
     private final DishRepository dishRepository;
     DishMapper mapper = Mappers.getMapper(DishMapper.class);
 
 
     @Override
     @Transactional
-    public ResponseDishDTO createDish(CreateDishDTO createDishDto){
+    public ResponseDishDto createDish(CreateDishDto createDishDto) {
         Dish dishEntity = mapper.mapCreateDishDtoToDish(createDishDto);
 
         Dish savedDish = dishRepository.save(dishEntity);
@@ -35,7 +34,7 @@ public class DishServiceImpl implements DishService{
     }
 
     @Override
-    public List<ResponseDishDTO> getDishes(){
+    public List<ResponseDishDto> getDishes() {
         List<Dish> dishes = dishRepository.findAll();
 
         return dishes.stream()
@@ -45,14 +44,14 @@ public class DishServiceImpl implements DishService{
 
     @Override
     @Transactional
-    public void deleteDish(Long dishId){
+    public void deleteDish(Long dishId) {
         Dish dish = dishRepository.findById(dishId).orElseThrow(() -> new NotFoundException("Dish with id=" + dishId + " was not found"));
         dishRepository.delete(dish);
     }
 
     @Override
     @Transactional
-    public ResponseDishDTO updateDish(Long dishId, UpdateDishDTO updateDto) {
+    public ResponseDishDto updateDish(Long dishId, UpdateDishDto updateDto) {
         Dish dish = dishRepository.findById(dishId).orElseThrow(() -> new NotFoundException("Dish with id=" + dishId + " was not found"));
 
         mapper.updateDishFromDto(updateDto, dish);
