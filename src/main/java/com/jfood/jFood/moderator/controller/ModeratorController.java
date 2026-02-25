@@ -30,7 +30,7 @@ public class ModeratorController {
         return moderatorService.getById(moderatorId);
     }
 
-    @PatchMapping("/{moderatorId}")
+    @PatchMapping("/admin/{moderatorId}")
     public ModeratorResponseDto update(@PathVariable Long moderatorId,
                                        @RequestBody ModeratorUpdateDto dto) {
         return moderatorService.update(moderatorId, dto);

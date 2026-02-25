@@ -7,17 +7,13 @@
 
 ### Управление курьерами
 
-Создать курьера: POST /couriers/admin
-
-Обновить курьера: PATCH /couriers/{courierId}
-
 Удалить курьера: DELETE /couriers/admin/{courierId}
 
 ### Управление модераторами
 
 Создать модератора: POST /moderators/admin
 
-Обновить модератора: PATCH /moderators/{moderatorId}
+Обновить модератора: PATCH /admin/moderators/{moderatorId}
 
 Удалить модератора: DELETE /moderators/admin/{moderatorId}
 
