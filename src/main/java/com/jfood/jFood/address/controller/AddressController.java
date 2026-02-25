@@ -18,11 +18,6 @@ import java.util.List;
 public class AddressController {
     private final AddressService addressService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public AddressDto create(@RequestBody @Valid UpdateAddressDto dto) {
-        return addressService.createAddress(dto);
-    }
 
     @PatchMapping("/{id}")
     public AddressDto update(@PathVariable Long id, @RequestBody @Valid UpdateAddressDto dto) {

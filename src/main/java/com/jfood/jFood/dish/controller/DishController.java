@@ -18,19 +18,19 @@ public class DishController {
     private final DishSrevice dishService;
 
 
-    @PostMapping
+    @PostMapping("/admin")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseDishDto createDish(@Valid @RequestBody CreateDishDto createDto) {
         return dishService.createDish(createDto);
     }
 
-    @PatchMapping("/{dishId}")
+    @PatchMapping("/admin/{dishId}")
     public ResponseDishDto updateDish(@PathVariable Long dishId,
                                       @RequestBody UpdateDishDto updateDto) {
         return dishService.updateDish(dishId, updateDto);
     }
 
-    @DeleteMapping("/{dishId}")
+    @DeleteMapping("/admin/{dishId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteDish(@PathVariable Long dishId) {
         dishService.deleteDish(dishId);

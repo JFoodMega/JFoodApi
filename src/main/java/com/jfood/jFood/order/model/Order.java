@@ -1,7 +1,9 @@
 package com.jfood.jFood.order.model;
 
 import com.jfood.jFood.client.model.Client;
+import com.jfood.jFood.courier.model.Courier;
 import com.jfood.jFood.dish.model.Dish;
+import com.jfood.jFood.moderator.model.Moderator;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,6 +50,18 @@ public class Order {
             inverseJoinColumns = @JoinColumn(name = "dish_id")
     )
     private List<Dish> dishes = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "courier_id")
+    private Courier courier;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "moderator_id")
+    private Moderator moderator;
+
+    @Column(name = "assigned_at")
+    private LocalDateTime assignedAt;
+
 
     @PrePersist
     void onCreate() {

@@ -7,10 +7,12 @@ import com.jfood.jFood.dish.model.Dish;
 import com.jfood.jFood.dish.repository.DishRepository;
 import com.jfood.jFood.order.dto.CreateOrderDto;
 import com.jfood.jFood.order.dto.ResponseOrderDto;
+import com.jfood.jFood.order.dto.UpdateOrderStatusDto;
 import com.jfood.jFood.order.mapper.OrderMapper;
 import com.jfood.jFood.order.model.Order;
 import com.jfood.jFood.order.model.OrderStatus;
 import com.jfood.jFood.order.repository.OrderRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -95,4 +97,31 @@ public class OrderServiceImpl implements OrderService {
         }
         orderRepository.deleteById(orderId);
     }
+
+    @Override
+    @Transactional
+    public ResponseOrderDto updateStatus(Long orderId, UpdateOrderStatusDto dto) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Заказ не найден: " + orderId));
+
+        validateStatusTransition(order.getStatus(), dto.getStatus());
+
+        order.setStatus(dto.getStatus());
+        return orderMapper.toResponseDto(order);
+    }
+
+    private void validateStatusTransition(OrderStatus current, OrderStatus next) {
+        switch (current) {
+            case COURIER_ASSIGNED -> {
+                if (next != OrderStatus.ON_THE_WAY && next != OrderStatus.CANCELED)
+                    throw new IllegalStateException("Недопустимый переход статуса: " + current + " -> " + next);
+            }
+            case ON_THE_WAY -> {
+                if (next != OrderStatus.DELIVERED)
+                    throw new IllegalStateException("Недопустимый переход статуса: " + current + " -> " + next);
+            }
+            default -> throw new IllegalStateException("Нельзя менять статус из: " + current);
+        }
+    }
+
 }

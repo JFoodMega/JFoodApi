@@ -1,108 +1,41 @@
-## Clients
-#### POST /clients
 
-Создать клиента.
-Body: CreateClientDto.
-Response: 201 Created, body ResponseClientDto.
+## Что конкретно умеет ADMIN
+### Управление клиентами
+Получить всех клиентов: GET /clients/admin
 
-#### POST /clients/login - вход пользователя!
+Удалить клиента: DELETE /clients/admin/{clientId}
 
-#### PATCH /clients/{clientId}
+### Управление курьерами
 
-Обновить данные клиента.
-Body: UpdateClientDto.
-Response: 200 OK, body ResponseClientDto.
+Создать курьера: POST /couriers/admin
 
-#### DELETE /clients/{clientId}
+Обновить курьера: PATCH /couriers/{courierId}
 
-Удалить клиента.
-Response: 204 No Content.
+Удалить курьера: DELETE /couriers/admin/{courierId}
 
-#### GET /clients
+### Управление модераторами
 
-Получить список всех клиентов.
-Response: 200 OK, body List<ResponseClientDto>.(адреса не подшружаются)
+Создать модератора: POST /moderators/admin
 
-#### GET /clients/{clientId}/addresses
+Обновить модератора: PATCH /moderators/{moderatorId}
 
-Получить адреса клиента.
-Response: 200 OK, body List<AddressDto>.
+Удалить модератора: DELETE /moderators/admin/{moderatorId}
 
-#### POST /clients/{clientId}/addresses
+Получить всех модераторов: GET /moderators/admin
 
-Добавить адрес клиенту.
-Body: UpdateAddressDto.
-Response: 201 Created, body AddressDto.
+### Управление блюдами
 
-#### PATCH /clients/{clientId}/addresses/{addressId}
+Создать блюдо: POST /dishes/admin
 
-Обновить адрес клиента.
-Body: UpdateAddressDto.
-Response: 200 OK, body AddressDto.
+Обновить блюдо: PATCH /dishes/admin/{dishId}
 
-#### DELETE /clients/{clientId}/addresses/{addressId}
+Удалить блюдо: DELETE /dishes/admin/{dishId}
 
-Удалить адрес клиента.
-Response: 204 No Content.
+### Управление заказами
 
-## Dishes
+Получить все заказы постранично: GET /orders/admin
 
-#### POST /dishes
-
-Создать блюдо.
-Body: CreateDishDto.
-Response: 201 Created, body ResponseDishDto.
-
-#### PATCH /dishes/{dishId}
-
-Обновить блюдо.
-Body: UpdateDishDto.
-Response: 200 OK, body ResponseDishDto.
-
-#### DELETE /dishes/{dishId}
-
-Удалить блюдо.
-Response: 204 No Content.
-
-#### GET /dishes
-
-Получить список блюд.
-Response: 200 OK, body List<ResponseDishDto>.
-
-## Orders
-
-#### POST /orders
-
-Создать заказ.
-Body: CreateOrderDto (например: clientId, dishIds).
-Response: 201 Created, body ResponseOrderDto.
-
-#### PATCH /orders/{id}/status?status=CREATED|COURIER_ASSIGNED|...
-
-Обновить только статус заказа.
-Query param: status (enum OrderStatus).
-Response: 200 OK, body ResponseOrderDto.(не меняется статус, исправлю)
-
-#### GET /orders/{id}
-
-Получить заказ по id.
-Response: 200 OK, body ResponseOrderDto.
-
-#### GET /orders?page=0&size=20&sort=createdAt,desc
-
-Получить список заказов постранично.
-Query params: стандартные для Pageable (page, size, sort).
-Response: 200 OK, body Page<ResponseOrderDto>.
-
-#### GET /orders/client/{clientId}?page=0&size=20&sort=createdAt,desc
-
-Получить заказы конкретного клиента постранично.
-Response: 200 OK, body Page<ResponseOrderDto>.
-
-#### DELETE /orders/{id}
-
-Удалить заказ.
-Response: 204 No Content.
+Удалить заказ: DELETE /orders/admin/{id}
 
 ### Для запуска докера
 Клонируешь репозиторий

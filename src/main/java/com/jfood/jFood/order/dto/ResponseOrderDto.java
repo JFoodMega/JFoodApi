@@ -13,9 +13,12 @@ import java.util.List;
 public class ResponseOrderDto {
     private Long id;
     private Long clientId;
+    private Long courierId;
+    private Long moderatorId;
     private OrderStatus status;
     private Integer totalPrice;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDateTime assignedAt;
     private List<ResponseDishDto> dishes;
 }

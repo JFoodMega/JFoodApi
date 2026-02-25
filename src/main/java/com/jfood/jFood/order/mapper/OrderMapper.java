@@ -11,6 +11,8 @@ public interface OrderMapper {
 
     @Mapping(target = "clientId", source = "client.id")
     @Mapping(target = "totalPrice", source = "totalPrice")
+    @Mapping(target = "courierId", source = "courier.id")
+    @Mapping(target = "moderatorId", source = "moderator.id")
     ResponseOrderDto toResponseDto(Order order);
 
     @Mapping(target = "id", ignore = true)
