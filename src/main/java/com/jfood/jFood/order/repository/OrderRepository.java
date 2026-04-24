@@ -8,7 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface OrderRepository extends JpaRepository<Order, Long> {
+public interface
+
+OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findByClientId(Long clientId, Pageable pageable);
 
     List<Order> findByCourierId(Long courierId);
@@ -18,4 +20,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findByStatus(OrderStatus status, Pageable pageable);
 
     Page<Order> findByStatusIn(List<OrderStatus> statuses, Pageable pageable);
+
+    int countByCourierIdAndStatus(Long courierId, OrderStatus status);
+
+    Page<Order> findByCourierId(Long courierId, Pageable pageable);
 }

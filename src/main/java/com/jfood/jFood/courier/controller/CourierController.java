@@ -8,6 +8,8 @@ import com.jfood.jFood.courier.service.CourierService;
 import com.jfood.jFood.order.dto.ResponseOrderDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +46,7 @@ public class CourierController {
 
     @PatchMapping("/{courierId}")
     public CourierResponseDto update(@PathVariable Long courierId,
-                                     @RequestBody CourierUpdateDto dto) {
+                                     @Valid @RequestBody CourierUpdateDto dto) {
         return courierService.update(courierId, dto);
     }
 
@@ -55,7 +57,9 @@ public class CourierController {
     }
 
     @GetMapping("/{courierId}/orders")
-    public List<ResponseOrderDto> getMyOrders(@PathVariable Long courierId) {
-        return courierService.getMyOrders(courierId);
+    public Page<ResponseOrderDto> getMyOrders(
+            @PathVariable Long courierId,
+            Pageable pageable) {
+        return courierService.getMyOrders(courierId, pageable);
     }
 }

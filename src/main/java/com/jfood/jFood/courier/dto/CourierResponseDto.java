@@ -10,4 +10,6 @@ public class CourierResponseDto {
     private String name;
     private String phone;
     private Boolean isAvailable;
+    private Integer totalDeliveries;
+    private Integer totalEarnings;
 }
