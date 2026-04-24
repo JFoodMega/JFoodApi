@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "dishes")
 @Getter
@@ -23,8 +26,11 @@ public class Dish {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "price", nullable = false, precision = 10, scale = 2)
+    @Column(name = "price", nullable = false)
     private Integer price;
+
+    @Column(name = "calories")
+    private Integer calories;
 
     @Column(name = "weight_volume", nullable = false, length = 60)
     private String weightVolume;
@@ -32,4 +38,17 @@ public class Dish {
     @Column(name = "image_url", length = 300)
     private String imageUrl;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cuisine_type", nullable = false)
+    private CuisineType cuisineType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "dish_type", nullable = false)
+    private DishType dishType;
+
+    @OneToMany(mappedBy = "dish", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DishExtra> extras = new ArrayList<>();
+
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
 }

@@ -1,21 +1,24 @@
 package com.jfood.jFood.dish.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import com.jfood.jFood.dish.model.CuisineType;
+import com.jfood.jFood.dish.model.DishType;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
 public class ResponseDishDto {
-
-    @NotBlank
+    private Long id;
     private String name;
-    @NotBlank
     private Integer price;
-    @NotBlank
     private String description;
-    @NotBlank
     private String imageUrl;
-    @NotBlank
     private String weightVolume;
+    private Integer calories;
+    private CuisineType cuisineType;
+    private List<ResponseDishExtraDto> extras;
+    private DishType dishType;
+    private Boolean isActive;
 }
