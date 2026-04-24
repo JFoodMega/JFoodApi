@@ -14,7 +14,6 @@ import com.jfood.jFood.order.mapper.OrderMapper;
 import com.jfood.jFood.order.model.Order;
 import com.jfood.jFood.order.model.OrderStatus;
 import com.jfood.jFood.order.repository.OrderRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
