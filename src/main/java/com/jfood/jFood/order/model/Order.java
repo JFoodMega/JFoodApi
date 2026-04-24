@@ -1,5 +1,6 @@
 package com.jfood.jFood.order.model;
 
+import com.jfood.jFood.address.model.Address;
 import com.jfood.jFood.client.model.Client;
 import com.jfood.jFood.courier.model.Courier;
 import com.jfood.jFood.dish.model.Dish;
@@ -62,12 +63,23 @@ public class Order {
     @Column(name = "assigned_at")
     private LocalDateTime assignedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
+
+    @Column(name = "delivery_time")
+    private LocalDateTime deliveryTime;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "delivery_type")
+    private DeliveryType deliveryType;
+
 
     @PrePersist
     void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = createdAt;
-        if (status == null) status = OrderStatus.CREATED;
+        if (status == null) status = OrderStatus.CART;
     }
 
     @PreUpdate

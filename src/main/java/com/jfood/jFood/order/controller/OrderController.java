@@ -1,8 +1,10 @@
 package com.jfood.jFood.order.controller;
 
+import com.jfood.jFood.order.dto.CheckoutOrderDto;
 import com.jfood.jFood.order.dto.CreateOrderDto;
 import com.jfood.jFood.order.dto.ResponseOrderDto;
 import com.jfood.jFood.order.dto.UpdateOrderStatusDto;
+import com.jfood.jFood.order.model.OrderStatus;
 import com.jfood.jFood.order.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,12 @@ public class OrderController {
         return orderService.createOrder(dto);
     }
 
+    @PostMapping("/{orderId}/checkout")
+    public ResponseOrderDto checkout(@PathVariable Long orderId,
+                                     @Valid @RequestBody CheckoutOrderDto dto) {
+        return orderService.checkout(orderId, dto);
+    }
+
     @GetMapping("/{id}")
     public ResponseOrderDto getById(@PathVariable Long id) {
         return orderService.getById(id);
@@ -35,16 +43,22 @@ public class OrderController {
         return orderService.getAll(pageable);
     }
 
+    @GetMapping("/admin/status")
+    public Page<ResponseOrderDto> getByStatus(
+            @RequestParam OrderStatus status,
+            Pageable pageable) {
+        return orderService.getByStatus(status, pageable);
+    }
+
+    @GetMapping("/admin/in-progress")
+    public Page<ResponseOrderDto> getInProgress(Pageable pageable) {
+        return orderService.getInProgress(pageable);
+    }
+
     @GetMapping("/client/{clientId}")
     public Page<ResponseOrderDto> getByClientId(@PathVariable Long clientId,
                                                 Pageable pageable) {
         return orderService.getByClientId(clientId, pageable);
-    }
-
-    @DeleteMapping("admin/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
-        orderService.delete(id);
     }
 
     @PatchMapping("/{orderId}/status")
@@ -53,5 +67,9 @@ public class OrderController {
         return orderService.updateStatus(orderId, dto);
     }
 
-
+    @DeleteMapping("/admin/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        orderService.delete(id);
+    }
 }
