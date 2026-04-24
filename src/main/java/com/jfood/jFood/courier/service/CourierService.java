@@ -5,6 +5,8 @@ import com.jfood.jFood.courier.dto.CourierCreateDto;
 import com.jfood.jFood.courier.dto.CourierResponseDto;
 import com.jfood.jFood.courier.dto.CourierUpdateDto;
 import com.jfood.jFood.order.dto.ResponseOrderDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -22,6 +24,6 @@ public interface CourierService {
 
     void delete(Long id);
 
-    List<ResponseOrderDto> getMyOrders(Long courierId);
+    Page<ResponseOrderDto> getMyOrders(Long courierId, Pageable pageable);
 }
 

@@ -39,7 +39,6 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginResponseDto login(LoginRequestDto dto) {
 
-        // Проверяем админа первым — без БД
         if (dto.getLogin().equals(adminLogin)) {
             if (!dto.getPassword().equals(adminPassword)) {
                 throw new IllegalArgumentException("Неверный пароль");
@@ -47,7 +46,6 @@ public class AuthServiceImpl implements AuthService {
             return new LoginResponseDto(Role.ADMIN, null);
         }
 
-        // Ищем клиента
         Optional<Client> client = clientRepository.findByLogin(dto.getLogin());
         if (client.isPresent()) {
             if (!client.get().getPassword().equals(dto.getPassword())) {
@@ -56,7 +54,6 @@ public class AuthServiceImpl implements AuthService {
             return new LoginResponseDto(Role.CLIENT, clientMapper.mapClientToResponseClientDto(client.get()));
         }
 
-        // Ищем курьера
         Optional<Courier> courier = courierRepository.findByLogin(dto.getLogin());
         if (courier.isPresent()) {
             if (!courier.get().getPassword().equals(dto.getPassword())) {
@@ -65,7 +62,6 @@ public class AuthServiceImpl implements AuthService {
             return new LoginResponseDto(Role.COURIER, courierMapper.toResponseDto(courier.get()));
         }
 
-        // Ищем модератора
         Optional<Moderator> moderator = moderatorRepository.findByLogin(dto.getLogin());
         if (moderator.isPresent()) {
             if (!moderator.get().getPassword().equals(dto.getPassword())) {

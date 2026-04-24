@@ -10,9 +10,9 @@ import org.mapstruct.Mapping;
 public interface OrderMapper {
 
     @Mapping(target = "clientId", source = "client.id")
-    @Mapping(target = "totalPrice", source = "totalPrice")
     @Mapping(target = "courierId", source = "courier.id")
     @Mapping(target = "moderatorId", source = "moderator.id")
+    @Mapping(target = "addressId", source = "address.id")
     ResponseOrderDto toResponseDto(Order order);
 
     @Mapping(target = "id", ignore = true)
@@ -22,5 +22,11 @@ public interface OrderMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "totalPrice", ignore = true)
+    @Mapping(target = "courier", ignore = true)
+    @Mapping(target = "moderator", ignore = true)
+    @Mapping(target = "assignedAt", ignore = true)
+    @Mapping(target = "address", ignore = true)
+    @Mapping(target = "deliveryTime", ignore = true)
+    @Mapping(target = "deliveryType", ignore = true)
     Order toEntity(CreateOrderDto dto);
 }

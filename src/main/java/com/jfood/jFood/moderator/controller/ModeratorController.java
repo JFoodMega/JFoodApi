@@ -44,7 +44,7 @@ public class ModeratorController {
 
     @GetMapping("/orders")
     public List<ResponseOrderDto> getAllOrders() {
-        return moderatorService.getAllOrders();
+        return moderatorService.getNewOrders();
     }
 
     @PostMapping("/orders/{orderId}/assign")

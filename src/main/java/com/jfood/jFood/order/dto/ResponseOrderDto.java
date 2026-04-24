@@ -1,6 +1,7 @@
 package com.jfood.jFood.order.dto;
 
 import com.jfood.jFood.dish.dto.ResponseDishDto;
+import com.jfood.jFood.order.model.DeliveryType;
 import com.jfood.jFood.order.model.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,5 +21,8 @@ public class ResponseOrderDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime assignedAt;
+    private LocalDateTime deliveryTime;
+    private DeliveryType deliveryType;
+    private Long addressId;
     private List<ResponseDishDto> dishes;
 }

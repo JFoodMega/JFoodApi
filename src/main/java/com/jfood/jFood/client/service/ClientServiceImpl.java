@@ -13,7 +13,12 @@ import com.jfood.jFood.client.mapper.ClientMapper;
 import com.jfood.jFood.client.model.Client;
 import com.jfood.jFood.client.repository.ClientRepository;
 import com.jfood.jFood.exception.NotFoundException;
+import com.jfood.jFood.order.dto.ResponseOrderDto;
+import com.jfood.jFood.order.mapper.OrderMapper;
+import com.jfood.jFood.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,73 +33,67 @@ public class ClientServiceImpl implements ClientService {
     private final AddressRepository addressRepository;
     private final ClientMapper mapper;
     private final AddressMapper addressMapper;
+    private final OrderRepository orderRepository;
+    private final OrderMapper orderMapper;
 
     @Override
     @Transactional
     public ResponseClientDto createClient(CreateClientDto createClientDto) {
         Client clientEntity = mapper.mapCreateClientDtoToClient(createClientDto);
-
-        Client savedClient = clientRepository.save(clientEntity);
-
-        return mapper.mapClientToResponseClientDto(savedClient);
-
+        return mapper.mapClientToResponseClientDto(clientRepository.save(clientEntity));
     }
 
     @Override
-    public List<ResponseClientDto> getClients() {
-        List<Client> clients = clientRepository.findAll();
+    public Page<ResponseClientDto> getClients(String search, Pageable pageable) {
+        return clientRepository.findBySearch(search, pageable)
+                .map(mapper::mapClientToResponseClientDto);
+    }
 
-        return clients.stream()
-                .map(mapper::mapClientToResponseClientDto)
-                .collect(Collectors.toList());
+    @Override
+    public ResponseClientDto getClientById(Long clientId) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new NotFoundException("Клиент с id=" + clientId + " не найден"));
+        return mapper.mapClientToResponseClientDto(client);
     }
 
     @Override
     @Transactional
     public void deleteClient(Long clientId) {
-        Client client = clientRepository.findById(clientId).orElseThrow(() -> new NotFoundException("Client with id=" + clientId + " was not found"));
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new NotFoundException("Клиент с id=" + clientId + " не найден"));
         clientRepository.delete(client);
     }
 
     @Override
     @Transactional
     public ResponseClientDto updateClient(Long clientId, UpdateClientDto updateDto) {
-        Client client = clientRepository.findById(clientId).orElseThrow(() -> new NotFoundException("Client with id=" + clientId + " was not found"));
-
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new NotFoundException("Клиент с id=" + clientId + " не найден"));
         mapper.updateClientFromDto(updateDto, client);
-
-        Client savedClient = clientRepository.save(client);
-
-        return mapper.mapClientToResponseClientDto(savedClient);
+        return mapper.mapClientToResponseClientDto(clientRepository.save(client));
     }
 
     @Override
     @Transactional
     public AddressDto addAddress(Long clientId, UpdateAddressDto addressDto) {
         Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new NotFoundException("Client not found"));
-
+                .orElseThrow(() -> new NotFoundException("Клиент не найден"));
         Address address = addressMapper.mapToAddress(addressDto);
         address.setClient(client);
-
-        Address savedAddress = addressRepository.save(address);
-        return addressMapper.mapToAddressDto(savedAddress);
+        return addressMapper.mapToAddressDto(addressRepository.save(address));
     }
 
     @Override
     @Transactional
     public AddressDto updateClientAddress(Long clientId, Long addressId, UpdateAddressDto addressDto) {
         if (!clientRepository.existsById(clientId)) {
-            throw new NotFoundException("Client not found");
+            throw new NotFoundException("Клиент не найден");
         }
-
         Address address = addressRepository.findById(addressId)
-                .orElseThrow(() -> new NotFoundException("Address not found"));
-
+                .orElseThrow(() -> new NotFoundException("Адрес не найден"));
         if (!address.getClient().getId().equals(clientId)) {
-            throw new RuntimeException("This address does not belong to this client");
+            throw new RuntimeException("Этот адрес не принадлежит клиенту");
         }
-
         addressMapper.updateAddressFromDto(addressDto, address);
         return addressMapper.mapToAddressDto(addressRepository.save(address));
     }
@@ -103,20 +102,17 @@ public class ClientServiceImpl implements ClientService {
     @Transactional
     public void deleteAddress(Long clientId, Long addressId) {
         Address address = addressRepository.findById(addressId)
-                .orElseThrow(() -> new NotFoundException("Address not found"));
-
+                .orElseThrow(() -> new NotFoundException("Адрес не найден"));
         if (!address.getClient().getId().equals(clientId)) {
-            throw new RuntimeException("Access denied");
+            throw new RuntimeException("Нет доступа");
         }
-
         addressRepository.delete(address);
     }
 
     @Override
     public List<AddressDto> getClientAddresses(Long clientId) {
         Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new NotFoundException("Client not found"));
-
+                .orElseThrow(() -> new NotFoundException("Клиент не найден"));
         return client.getAddresses().stream()
                 .map(addressMapper::mapToAddressDto)
                 .collect(Collectors.toList());
@@ -125,20 +121,25 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ResponseClientDto login(LogInClientDto dto) {
         Client client = clientRepository.findByLogin(dto.getLogin())
-                .orElseThrow(() -> new NotFoundException("Wrong login or password"));
-
+                .orElseThrow(() -> new NotFoundException("Неверный логин или пароль"));
         if (!client.getPassword().equals(dto.getPassword())) {
-            throw new NotFoundException("Wrong login or password");
+            throw new NotFoundException("Неверный логин или пароль");
         }
-
         ResponseClientDto response = mapper.mapClientToResponseClientDto(client);
-
         response.setAddresses(
                 client.getAddresses().stream()
                         .map(addressMapper::mapToAddressDto)
                         .toList()
         );
-
         return response;
+    }
+
+    @Override
+    public Page<ResponseOrderDto> getClientOrders(Long clientId, Pageable pageable) {
+        if (!clientRepository.existsById(clientId)) {
+            throw new NotFoundException("Клиент с id=" + clientId + " не найден");
+        }
+        return orderRepository.findByClientId(clientId, pageable)
+                .map(orderMapper::toResponseDto);
     }
 }

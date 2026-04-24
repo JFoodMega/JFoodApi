@@ -17,7 +17,7 @@ public interface ModeratorService {
 
     void delete(Long id);
 
-    List<ResponseOrderDto> getAllOrders();
+    List<ResponseOrderDto> getNewOrders();
 
     ResponseOrderDto assignCourier(Long orderId, Long courierId, Long moderatorId);
 

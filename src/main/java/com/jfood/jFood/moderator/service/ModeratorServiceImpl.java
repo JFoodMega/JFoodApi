@@ -2,6 +2,7 @@ package com.jfood.jFood.moderator.service;
 
 import com.jfood.jFood.courier.model.Courier;
 import com.jfood.jFood.courier.repository.CourierRepository;
+import com.jfood.jFood.exception.NotFoundException;
 import com.jfood.jFood.moderator.dto.ModeratorCreateDto;
 import com.jfood.jFood.moderator.dto.ModeratorResponseDto;
 import com.jfood.jFood.moderator.dto.ModeratorUpdateDto;
@@ -13,7 +14,6 @@ import com.jfood.jFood.order.mapper.OrderMapper;
 import com.jfood.jFood.order.model.Order;
 import com.jfood.jFood.order.model.OrderStatus;
 import com.jfood.jFood.order.repository.OrderRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +42,7 @@ public class ModeratorServiceImpl implements ModeratorService {
     @Override
     public ModeratorResponseDto getById(Long id) {
         Moderator moderator = moderatorRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Модератор не найден: " + id));
+                .orElseThrow(() -> new NotFoundException("Модератор не найден: " + id));
         return moderatorMapper.toResponseDto(moderator);
     }
 
@@ -50,7 +50,7 @@ public class ModeratorServiceImpl implements ModeratorService {
     @Transactional
     public ModeratorResponseDto update(Long id, ModeratorUpdateDto dto) {
         Moderator moderator = moderatorRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Модератор не найден: " + id));
+                .orElseThrow(() -> new NotFoundException("Модератор не найден: " + id));
         moderatorMapper.updateFromDto(dto, moderator);
         return moderatorMapper.toResponseDto(moderator);
     }
@@ -59,14 +59,14 @@ public class ModeratorServiceImpl implements ModeratorService {
     @Transactional
     public void delete(Long id) {
         if (!moderatorRepository.existsById(id)) {
-            throw new EntityNotFoundException("Модератор не найден: " + id);
+            throw new NotFoundException("Модератор не найден: " + id);
         }
         moderatorRepository.deleteById(id);
     }
 
     @Override
-    public List<ResponseOrderDto> getAllOrders() {
-        return orderRepository.findAll()
+    public List<ResponseOrderDto> getNewOrders() {
+        return orderRepository.findByStatus(OrderStatus.CREATED)
                 .stream()
                 .map(orderMapper::toResponseDto)
                 .toList();
@@ -76,28 +76,29 @@ public class ModeratorServiceImpl implements ModeratorService {
     @Transactional
     public ResponseOrderDto assignCourier(Long orderId, Long courierId, Long moderatorId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new EntityNotFoundException("Заказ не найден: " + orderId));
+                .orElseThrow(() -> new NotFoundException("Заказ не найден: " + orderId));
 
         if (order.getStatus() != OrderStatus.CREATED) {
             throw new IllegalStateException("Заказ уже назначен или недоступен");
         }
 
         Courier courier = courierRepository.findById(courierId)
-                .orElseThrow(() -> new EntityNotFoundException("Курьер не найден: " + courierId));
+                .orElseThrow(() -> new NotFoundException("Курьер не найден: " + courierId));
 
         if (!courier.getIsAvailable()) {
             throw new IllegalStateException("Курьер недоступен");
         }
 
         Moderator moderator = moderatorRepository.findById(moderatorId)
-                .orElseThrow(() -> new EntityNotFoundException("Модератор не найден: " + moderatorId));
+                .orElseThrow(() -> new NotFoundException("Модератор не найден: " + moderatorId));
 
         order.setCourier(courier);
         order.setModerator(moderator);
         order.setAssignedAt(LocalDateTime.now());
         order.setStatus(OrderStatus.COURIER_ASSIGNED);
+        courier.setIsAvailable(false);
 
-        return orderMapper.toResponseDto(order);
+        return orderMapper.toResponseDto(orderRepository.save(order));
     }
 
     @Override
@@ -107,5 +108,4 @@ public class ModeratorServiceImpl implements ModeratorService {
                 .map(moderatorMapper::toResponseDto)
                 .toList();
     }
-
 }

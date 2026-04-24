@@ -1,5 +1,6 @@
 package com.jfood.jFood.client.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,11 +9,12 @@ import lombok.Setter;
 @Setter
 public class CreateClientDto {
     @NotBlank
-    private String phone;
-    @NotBlank
+    @Email
     private String login;
     @NotBlank
-    private String password;
-    @NotBlank
     private String name;
+    @NotBlank
+    private String phone;
+    @NotBlank
+    private String password;
 }
