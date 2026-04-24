@@ -6,8 +6,11 @@ import com.jfood.jFood.client.dto.CreateClientDto;
 import com.jfood.jFood.client.dto.ResponseClientDto;
 import com.jfood.jFood.client.dto.UpdateClientDto;
 import com.jfood.jFood.client.service.ClientService;
+import com.jfood.jFood.order.dto.ResponseOrderDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,16 +22,27 @@ import java.util.List;
 public class ClientController {
     private final ClientService clientService;
 
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseClientDto createClient(@Valid @RequestBody CreateClientDto createDto) {
         return clientService.createClient(createDto);
     }
 
+    @GetMapping("/admin")
+    public Page<ResponseClientDto> getClients(
+            @RequestParam(required = false) String search,
+            Pageable pageable) {
+        return clientService.getClients(search, pageable);
+    }
+
+    @GetMapping("/admin/{clientId}")
+    public ResponseClientDto getClientById(@PathVariable Long clientId) {
+        return clientService.getClientById(clientId);
+    }
+
     @PatchMapping("/{clientId}")
     public ResponseClientDto updateClient(@PathVariable Long clientId,
-                                          @RequestBody UpdateClientDto updateDto) {
+                                          @Valid @RequestBody UpdateClientDto updateDto) {
         return clientService.updateClient(clientId, updateDto);
     }
 
@@ -36,11 +50,6 @@ public class ClientController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteClient(@PathVariable Long clientId) {
         clientService.deleteClient(clientId);
-    }
-
-    @GetMapping("/admin")
-    public List<ResponseClientDto> getClients() {
-        return clientService.getClients();
     }
 
     @GetMapping("/{clientId}/addresses")
@@ -69,4 +78,10 @@ public class ClientController {
         clientService.deleteAddress(clientId, addressId);
     }
 
+    @GetMapping("/{clientId}/orders")
+    public Page<ResponseOrderDto> getClientOrders(
+            @PathVariable Long clientId,
+            Pageable pageable) {
+        return clientService.getClientOrders(clientId, pageable);
+    }
 }
