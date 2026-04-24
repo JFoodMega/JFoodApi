@@ -16,7 +16,7 @@ public interface DishRepository extends JpaRepository<Dish, Long> {
             WHERE d.isActive = true
             AND (:#{#cuisineType} IS NULL OR d.cuisineType = :#{#cuisineType})
             AND (:#{#dishType} IS NULL OR d.dishType = :#{#dishType})
-            AND (:name IS NULL OR LOWER(d.name) LIKE LOWER(CONCAT('%', :name, '%')))
+            AND (:name IS NULL OR LOWER(d.name) LIKE LOWER(CONCAT('%', CAST(:name AS string), '%')))
             """)
     List<Dish> findAllWithFilters(
             @Param("cuisineType") CuisineType cuisineType,
