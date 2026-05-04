@@ -9,5 +9,5 @@ public class UpdateClientDto {
     private String name;
     private String phone;
     private String login;
-    //private List<Address> addresses = new ArrayList<>();
+    private String photoUrl;
 }

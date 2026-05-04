@@ -20,6 +20,8 @@ public class ResponseClientDto {
     @NotBlank
     private String name;
 
+    private String photoUrl;
+
     private List<AddressDto> addresses = new ArrayList<>();
 
 }

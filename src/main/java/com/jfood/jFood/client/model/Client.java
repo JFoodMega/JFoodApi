@@ -36,6 +36,9 @@ public class Client {
     @Column(nullable = false)
     private String phone;
 
+    @Column
+    private String photoUrl;
+
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Address> addresses = new ArrayList<>();
 
