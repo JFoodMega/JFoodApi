@@ -22,6 +22,8 @@ public class ResponseClientDto {
 
     private String photoUrl;
 
+    private Integer ordersCount;
+
     private List<AddressDto> addresses = new ArrayList<>();
 
 }
