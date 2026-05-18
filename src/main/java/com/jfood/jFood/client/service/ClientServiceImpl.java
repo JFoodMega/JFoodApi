@@ -12,7 +12,10 @@ import com.jfood.jFood.client.dto.UpdateClientDto;
 import com.jfood.jFood.client.mapper.ClientMapper;
 import com.jfood.jFood.client.model.Client;
 import com.jfood.jFood.client.repository.ClientRepository;
+import com.jfood.jFood.courier.repository.CourierRepository;
+import com.jfood.jFood.exception.AlreadyExistsException;
 import com.jfood.jFood.exception.NotFoundException;
+import com.jfood.jFood.moderator.repository.ModeratorRepository;
 import com.jfood.jFood.order.dto.ResponseOrderDto;
 import com.jfood.jFood.order.mapper.OrderMapper;
 import com.jfood.jFood.order.repository.OrderRepository;
@@ -30,6 +33,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
+    private final CourierRepository courierRepository;
+    private final ModeratorRepository moderatorRepository;
     private final AddressRepository addressRepository;
     private final ClientMapper mapper;
     private final AddressMapper addressMapper;
@@ -39,6 +44,16 @@ public class ClientServiceImpl implements ClientService {
     @Override
     @Transactional
     public ResponseClientDto createClient(CreateClientDto createClientDto) {
+        if (clientRepository.existsByLogin(createClientDto.getLogin())
+                || courierRepository.existsByLogin(createClientDto.getLogin())
+                || moderatorRepository.existsByLogin(createClientDto.getLogin())) {
+            throw new AlreadyExistsException("Пользователь с логином «" + createClientDto.getLogin() + "» уже существует");
+        }
+        if (clientRepository.existsByPhone(createClientDto.getPhone())
+                || courierRepository.existsByPhone(createClientDto.getPhone())
+                || moderatorRepository.existsByPhone(createClientDto.getPhone())) {
+            throw new AlreadyExistsException("Пользователь с телефоном «" + createClientDto.getPhone() + "» уже существует");
+        }
         Client clientEntity = mapper.mapCreateClientDtoToClient(createClientDto);
         return mapper.mapClientToResponseClientDto(clientRepository.save(clientEntity));
     }
@@ -46,7 +61,11 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Page<ResponseClientDto> getClients(String search, Pageable pageable) {
         return clientRepository.findBySearch(search, pageable)
-                .map(mapper::mapClientToResponseClientDto);
+                .map(client -> {
+                    ResponseClientDto dto = mapper.mapClientToResponseClientDto(client);
+                    dto.setOrdersCount((int) orderRepository.countByClientId(client.getId()));
+                    return dto;
+                });
     }
 
     @Override
@@ -69,6 +88,16 @@ public class ClientServiceImpl implements ClientService {
     public ResponseClientDto updateClient(Long clientId, UpdateClientDto updateDto) {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new NotFoundException("Клиент с id=" + clientId + " не найден"));
+        if (updateDto.getLogin() != null && (clientRepository.existsByLoginAndIdNot(updateDto.getLogin(), clientId)
+                || courierRepository.existsByLogin(updateDto.getLogin())
+                || moderatorRepository.existsByLogin(updateDto.getLogin()))) {
+            throw new AlreadyExistsException("Пользователь с логином «" + updateDto.getLogin() + "» уже существует");
+        }
+        if (updateDto.getPhone() != null && (clientRepository.existsByPhoneAndIdNot(updateDto.getPhone(), clientId)
+                || courierRepository.existsByPhone(updateDto.getPhone())
+                || moderatorRepository.existsByPhone(updateDto.getPhone()))) {
+            throw new AlreadyExistsException("Пользователь с телефоном «" + updateDto.getPhone() + "» уже существует");
+        }
         mapper.updateClientFromDto(updateDto, client);
         return mapper.mapClientToResponseClientDto(clientRepository.save(client));
     }
@@ -92,7 +121,7 @@ public class ClientServiceImpl implements ClientService {
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new NotFoundException("Адрес не найден"));
         if (!address.getClient().getId().equals(clientId)) {
-            throw new RuntimeException("Этот адрес не принадлежит клиенту");
+            throw new IllegalStateException("Этот адрес не принадлежит клиенту");
         }
         addressMapper.updateAddressFromDto(addressDto, address);
         return addressMapper.mapToAddressDto(addressRepository.save(address));
@@ -104,7 +133,7 @@ public class ClientServiceImpl implements ClientService {
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new NotFoundException("Адрес не найден"));
         if (!address.getClient().getId().equals(clientId)) {
-            throw new RuntimeException("Нет доступа");
+            throw new IllegalStateException("Этот адрес не принадлежит клиенту");
         }
         addressRepository.delete(address);
     }

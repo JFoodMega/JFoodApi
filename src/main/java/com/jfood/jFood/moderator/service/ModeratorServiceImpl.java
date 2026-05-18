@@ -1,7 +1,9 @@
 package com.jfood.jFood.moderator.service;
 
+import com.jfood.jFood.client.repository.ClientRepository;
 import com.jfood.jFood.courier.model.Courier;
 import com.jfood.jFood.courier.repository.CourierRepository;
+import com.jfood.jFood.exception.AlreadyExistsException;
 import com.jfood.jFood.exception.NotFoundException;
 import com.jfood.jFood.moderator.dto.ModeratorCreateDto;
 import com.jfood.jFood.moderator.dto.ModeratorResponseDto;
@@ -27,14 +29,25 @@ import java.util.List;
 public class ModeratorServiceImpl implements ModeratorService {
 
     private final ModeratorRepository moderatorRepository;
-    private final OrderRepository orderRepository;
+    private final ClientRepository clientRepository;
     private final CourierRepository courierRepository;
+    private final OrderRepository orderRepository;
     private final ModeratorMapper moderatorMapper;
     private final OrderMapper orderMapper;
 
     @Override
     @Transactional
     public ModeratorResponseDto create(ModeratorCreateDto dto) {
+        if (moderatorRepository.existsByLogin(dto.getLogin())
+                || clientRepository.existsByLogin(dto.getLogin())
+                || courierRepository.existsByLogin(dto.getLogin())) {
+            throw new AlreadyExistsException("Пользователь с логином «" + dto.getLogin() + "» уже существует");
+        }
+        if (moderatorRepository.existsByPhone(dto.getPhone())
+                || clientRepository.existsByPhone(dto.getPhone())
+                || courierRepository.existsByPhone(dto.getPhone())) {
+            throw new AlreadyExistsException("Пользователь с телефоном «" + dto.getPhone() + "» уже существует");
+        }
         Moderator moderator = moderatorMapper.toEntity(dto);
         return moderatorMapper.toResponseDto(moderatorRepository.save(moderator));
     }
@@ -51,6 +64,16 @@ public class ModeratorServiceImpl implements ModeratorService {
     public ModeratorResponseDto update(Long id, ModeratorUpdateDto dto) {
         Moderator moderator = moderatorRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Модератор не найден: " + id));
+        if (dto.getLogin() != null && (moderatorRepository.existsByLoginAndIdNot(dto.getLogin(), id)
+                || clientRepository.existsByLogin(dto.getLogin())
+                || courierRepository.existsByLogin(dto.getLogin()))) {
+            throw new AlreadyExistsException("Пользователь с логином «" + dto.getLogin() + "» уже существует");
+        }
+        if (dto.getPhone() != null && (moderatorRepository.existsByPhoneAndIdNot(dto.getPhone(), id)
+                || clientRepository.existsByPhone(dto.getPhone())
+                || courierRepository.existsByPhone(dto.getPhone()))) {
+            throw new AlreadyExistsException("Пользователь с телефоном «" + dto.getPhone() + "» уже существует");
+        }
         moderatorMapper.updateFromDto(dto, moderator);
         return moderatorMapper.toResponseDto(moderator);
     }

@@ -13,12 +13,20 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
 
     Optional<Client> findByLogin(String login);
 
+    boolean existsByLogin(String login);
+
+    boolean existsByPhone(String phone);
+
+    boolean existsByLoginAndIdNot(String login, Long id);
+
+    boolean existsByPhoneAndIdNot(String phone, Long id);
+
     @Query("""
             SELECT c FROM Client c
-            WHERE (:search IS NULL OR
-                   LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%'))
-                   OR LOWER(c.phone) LIKE LOWER(CONCAT('%', :search, '%'))
-                   OR LOWER(c.login) LIKE LOWER(CONCAT('%', :search, '%')))
+            WHERE (CAST(:search AS string) IS NULL OR
+                   LOWER(c.name) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%'))
+                   OR LOWER(c.phone) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%'))
+                   OR LOWER(c.login) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')))
             """)
     Page<Client> findBySearch(@Param("search") String search, Pageable pageable);
 }

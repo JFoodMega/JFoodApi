@@ -1,5 +1,6 @@
 package com.jfood.jFood.courier.service;
 
+import com.jfood.jFood.client.repository.ClientRepository;
 import com.jfood.jFood.courier.dto.CourierAvailabilityDto;
 import com.jfood.jFood.courier.dto.CourierCreateDto;
 import com.jfood.jFood.courier.dto.CourierResponseDto;
@@ -7,7 +8,9 @@ import com.jfood.jFood.courier.dto.CourierUpdateDto;
 import com.jfood.jFood.courier.mapper.CourierMapper;
 import com.jfood.jFood.courier.model.Courier;
 import com.jfood.jFood.courier.repository.CourierRepository;
+import com.jfood.jFood.exception.AlreadyExistsException;
 import com.jfood.jFood.exception.NotFoundException;
+import com.jfood.jFood.moderator.repository.ModeratorRepository;
 import com.jfood.jFood.order.dto.ResponseOrderDto;
 import com.jfood.jFood.order.mapper.OrderMapper;
 import com.jfood.jFood.order.model.OrderStatus;
@@ -19,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -27,6 +32,8 @@ import java.util.List;
 public class CourierServiceImpl implements CourierService {
 
     private final CourierRepository courierRepository;
+    private final ClientRepository clientRepository;
+    private final ModeratorRepository moderatorRepository;
     private final OrderRepository orderRepository;
     private final CourierMapper courierMapper;
     private final OrderMapper orderMapper;
@@ -37,6 +44,16 @@ public class CourierServiceImpl implements CourierService {
     @Override
     @Transactional
     public CourierResponseDto create(CourierCreateDto dto) {
+        if (courierRepository.existsByLogin(dto.getLogin())
+                || clientRepository.existsByLogin(dto.getLogin())
+                || moderatorRepository.existsByLogin(dto.getLogin())) {
+            throw new AlreadyExistsException("Пользователь с логином «" + dto.getLogin() + "» уже существует");
+        }
+        if (courierRepository.existsByPhone(dto.getPhone())
+                || clientRepository.existsByPhone(dto.getPhone())
+                || moderatorRepository.existsByPhone(dto.getPhone())) {
+            throw new AlreadyExistsException("Пользователь с телефоном «" + dto.getPhone() + "» уже существует");
+        }
         Courier courier = courierMapper.toEntity(dto);
         return enrichWithStats(courierMapper.toResponseDto(courierRepository.save(courier)), courier.getId());
     }
@@ -70,6 +87,16 @@ public class CourierServiceImpl implements CourierService {
     public CourierResponseDto update(Long id, CourierUpdateDto dto) {
         Courier courier = courierRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Курьер не найден: " + id));
+        if (dto.getLogin() != null && (courierRepository.existsByLoginAndIdNot(dto.getLogin(), id)
+                || clientRepository.existsByLogin(dto.getLogin())
+                || moderatorRepository.existsByLogin(dto.getLogin()))) {
+            throw new AlreadyExistsException("Пользователь с логином «" + dto.getLogin() + "» уже существует");
+        }
+        if (dto.getPhone() != null && (courierRepository.existsByPhoneAndIdNot(dto.getPhone(), id)
+                || clientRepository.existsByPhone(dto.getPhone())
+                || moderatorRepository.existsByPhone(dto.getPhone()))) {
+            throw new AlreadyExistsException("Пользователь с телефоном «" + dto.getPhone() + "» уже существует");
+        }
         courierMapper.updateFromDto(dto, courier);
         return enrichWithStats(courierMapper.toResponseDto(courier), id);
     }
@@ -93,6 +120,13 @@ public class CourierServiceImpl implements CourierService {
         int totalDeliveries = orderRepository.countByCourierIdAndStatus(courierId, OrderStatus.DELIVERED);
         dto.setTotalDeliveries(totalDeliveries);
         dto.setTotalEarnings(totalDeliveries * deliveryPrice);
+
+        LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
+        int todayDeliveries = orderRepository.countByCourierIdAndStatusAndUpdatedAtAfter(
+                courierId, OrderStatus.DELIVERED, startOfToday);
+        dto.setTodayDeliveries(todayDeliveries);
+        dto.setTodayEarnings(todayDeliveries * deliveryPrice);
+
         return dto;
     }
 }
