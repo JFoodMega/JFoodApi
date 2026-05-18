@@ -23,5 +23,17 @@ public interface DishRepository extends JpaRepository<Dish, Long> {
             @Param("dishType") DishType dishType,
             @Param("name") String name);
 
+    @Query("""
+            SELECT d FROM Dish d
+            WHERE (:name IS NULL OR LOWER(d.name) LIKE LOWER(CONCAT('%', CAST(:name AS string), '%')))
+            ORDER BY d.id DESC
+            """)
+    List<Dish> findAllIncludingInactive(@Param("name") String name);
+
     boolean existsByName(String name);
+
+    boolean existsByNameAndIdNot(String name, Long id);
+
+    @Query("SELECT COUNT(o) > 0 FROM Order o JOIN o.dishes d WHERE d.id = :dishId")
+    boolean isUsedInOrders(@Param("dishId") Long dishId);
 }

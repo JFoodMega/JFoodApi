@@ -41,7 +41,13 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public List<ResponseDishDto> getDishes(CuisineType cuisineType, DishType dishType, String name) {
+    public List<ResponseDishDto> getDishes(CuisineType cuisineType, DishType dishType, String name, boolean includeInactive) {
+        if (includeInactive) {
+            return dishRepository.findAllIncludingInactive(name)
+                    .stream()
+                    .map(mapper::mapDishToResponseDishDto)
+                    .collect(Collectors.toList());
+        }
         return dishRepository.findAllWithFilters(cuisineType, dishType, name)
                 .stream()
                 .map(mapper::mapDishToResponseDishDto)
@@ -62,7 +68,14 @@ public class DishServiceImpl implements DishService {
         Dish dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new NotFoundException("Блюдо с id=" + dishId + " не найдено"));
 
-        dishRepository.delete(dish);
+        if (dishRepository.isUsedInOrders(dishId)) {
+            // Блюдо входит в заказы — физическое удаление невозможно,
+            // деактивируем вместо этого чтобы сохранить историю заказов
+            dish.setIsActive(false);
+            dishRepository.save(dish);
+        } else {
+            dishRepository.delete(dish);
+        }
     }
 
     @Override
@@ -70,6 +83,9 @@ public class DishServiceImpl implements DishService {
     public ResponseDishDto updateDish(Long dishId, UpdateDishDto updateDishDto) {
         Dish dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new NotFoundException("Блюдо с id=" + dishId + " не найдено"));
+        if (updateDishDto.getName() != null && dishRepository.existsByNameAndIdNot(updateDishDto.getName(), dishId)) {
+            throw new AlreadyExistsException("Блюдо с названием '" + updateDishDto.getName() + "' уже существует");
+        }
 
         mapper.updateDishFromDto(updateDishDto, dish);
 
