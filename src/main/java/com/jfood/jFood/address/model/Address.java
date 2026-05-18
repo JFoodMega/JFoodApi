@@ -19,11 +19,12 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank
+
     private String city;
+
     @NotBlank
     private String street;
-    @NotBlank
+
     private String house;
 
     private int appartments;
