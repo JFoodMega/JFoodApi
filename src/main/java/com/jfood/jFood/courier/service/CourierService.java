@@ -16,6 +16,8 @@ public interface CourierService {
 
     CourierResponseDto getById(Long id);
 
+    List<CourierResponseDto> getAll();
+
     List<CourierResponseDto> getAllAvailable();
 
     CourierResponseDto updateAvailability(Long id, CourierAvailabilityDto dto);

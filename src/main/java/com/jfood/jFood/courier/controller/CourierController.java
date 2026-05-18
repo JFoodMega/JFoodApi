@@ -28,6 +28,11 @@ public class CourierController {
         return courierService.create(dto);
     }
 
+    @GetMapping("/admin")
+    public List<CourierResponseDto> getAll() {
+        return courierService.getAll();
+    }
+
     @GetMapping("/{courierId}")
     public CourierResponseDto getById(@PathVariable Long courierId) {
         return courierService.getById(courierId);

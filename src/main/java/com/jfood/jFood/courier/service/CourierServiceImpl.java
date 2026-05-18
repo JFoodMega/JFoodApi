@@ -66,6 +66,14 @@ public class CourierServiceImpl implements CourierService {
     }
 
     @Override
+    public List<CourierResponseDto> getAll() {
+        return courierRepository.findAll()
+                .stream()
+                .map(c -> enrichWithStats(courierMapper.toResponseDto(c), c.getId()))
+                .toList();
+    }
+
+    @Override
     public List<CourierResponseDto> getAllAvailable() {
         return courierRepository.findAllByIsAvailableTrue()
                 .stream()
