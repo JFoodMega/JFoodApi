@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @Setter
 public class CreateDishDto {
     @NotBlank
+    @Size(min = 2, max = 40, message = "Название блюда должно быть от 2 до 40 символов")
     private String name;
 
     @NotNull
