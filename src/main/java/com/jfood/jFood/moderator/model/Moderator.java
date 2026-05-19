@@ -28,5 +28,8 @@ public class Moderator {
     private String phone;
 
     private String name;
+
+    @Column(name = "is_online", nullable = false)
+    private Boolean isOnline = false;
 }
 

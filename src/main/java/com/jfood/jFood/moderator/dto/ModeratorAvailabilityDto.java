@@ -1,13 +1,12 @@
 package com.jfood.jFood.moderator.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class ModeratorResponseDto {
-    private Long id;
-    private String name;
-    private String phone;
+public class ModeratorAvailabilityDto {
+    @NotNull
     private Boolean isOnline;
 }

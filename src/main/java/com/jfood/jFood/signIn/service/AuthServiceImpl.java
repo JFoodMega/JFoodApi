@@ -38,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
     private String adminPassword;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public LoginResponseDto login(LoginRequestDto dto) {
 
         if (dto.getLogin().equals(adminLogin)) {
@@ -69,6 +69,8 @@ public class AuthServiceImpl implements AuthService {
             if (!moderator.get().getPassword().equals(dto.getPassword())) {
                 throw new IllegalArgumentException("Неверный пароль");
             }
+            moderator.get().setIsOnline(true);
+            moderatorRepository.save(moderator.get());
             return new LoginResponseDto(Role.MODERATOR, moderatorMapper.toResponseDto(moderator.get()));
         }
 

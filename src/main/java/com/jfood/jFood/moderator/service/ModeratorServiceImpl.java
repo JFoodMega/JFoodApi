@@ -5,6 +5,7 @@ import com.jfood.jFood.courier.model.Courier;
 import com.jfood.jFood.courier.repository.CourierRepository;
 import com.jfood.jFood.exception.AlreadyExistsException;
 import com.jfood.jFood.exception.NotFoundException;
+import com.jfood.jFood.moderator.dto.ModeratorAvailabilityDto;
 import com.jfood.jFood.moderator.dto.ModeratorCreateDto;
 import com.jfood.jFood.moderator.dto.ModeratorResponseDto;
 import com.jfood.jFood.moderator.dto.ModeratorUpdateDto;
@@ -76,6 +77,15 @@ public class ModeratorServiceImpl implements ModeratorService {
         }
         moderatorMapper.updateFromDto(dto, moderator);
         return moderatorMapper.toResponseDto(moderator);
+    }
+
+    @Override
+    @Transactional
+    public ModeratorResponseDto updateOnlineStatus(Long id, ModeratorAvailabilityDto dto) {
+        Moderator moderator = moderatorRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Модератор не найден: " + id));
+        moderator.setIsOnline(dto.getIsOnline());
+        return moderatorMapper.toResponseDto(moderatorRepository.save(moderator));
     }
 
     @Override

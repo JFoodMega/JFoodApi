@@ -1,5 +1,6 @@
 package com.jfood.jFood.moderator.service;
 
+import com.jfood.jFood.moderator.dto.ModeratorAvailabilityDto;
 import com.jfood.jFood.moderator.dto.ModeratorCreateDto;
 import com.jfood.jFood.moderator.dto.ModeratorResponseDto;
 import com.jfood.jFood.moderator.dto.ModeratorUpdateDto;
@@ -14,6 +15,8 @@ public interface ModeratorService {
     ModeratorResponseDto getById(Long id);
 
     ModeratorResponseDto update(Long id, ModeratorUpdateDto dto);
+
+    ModeratorResponseDto updateOnlineStatus(Long id, ModeratorAvailabilityDto dto);
 
     void delete(Long id);
 

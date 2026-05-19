@@ -1,5 +1,6 @@
 package com.jfood.jFood.moderator.controller;
 
+import com.jfood.jFood.moderator.dto.ModeratorAvailabilityDto;
 import com.jfood.jFood.moderator.dto.ModeratorCreateDto;
 import com.jfood.jFood.moderator.dto.ModeratorResponseDto;
 import com.jfood.jFood.moderator.dto.ModeratorUpdateDto;
@@ -34,6 +35,12 @@ public class ModeratorController {
     public ModeratorResponseDto update(@PathVariable Long moderatorId,
                                        @RequestBody ModeratorUpdateDto dto) {
         return moderatorService.update(moderatorId, dto);
+    }
+
+    @PatchMapping("/{moderatorId}/availability")
+    public ModeratorResponseDto updateAvailability(@PathVariable Long moderatorId,
+                                                   @Valid @RequestBody ModeratorAvailabilityDto dto) {
+        return moderatorService.updateOnlineStatus(moderatorId, dto);
     }
 
     @DeleteMapping("/admin/{moderatorId}")
