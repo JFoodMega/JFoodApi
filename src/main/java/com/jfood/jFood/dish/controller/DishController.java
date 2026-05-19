@@ -31,8 +31,9 @@ public class DishController {
     public List<ResponseDishDto> getDishes(
             @RequestParam(required = false) CuisineType cuisineType,
             @RequestParam(required = false) DishType dishType,
-            @RequestParam(required = false) String name) {
-        return dishService.getDishes(cuisineType, dishType, name);
+            @RequestParam(required = false) String name,
+            @RequestParam(defaultValue = "false") boolean includeInactive) {
+        return dishService.getDishes(cuisineType, dishType, name, includeInactive);
     }
 
     @GetMapping("/{dishId}")

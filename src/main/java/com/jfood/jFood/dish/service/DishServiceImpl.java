@@ -30,7 +30,7 @@ public class DishServiceImpl implements DishService {
     @Override
     @Transactional
     public ResponseDishDto createDish(CreateDishDto createDishDto) {
-        if (dishRepository.existsByName(createDishDto.getName())) {
+        if (dishRepository.existsByNameIgnoreCase(createDishDto.getName())) {
             throw new AlreadyExistsException("Блюдо с названием '" + createDishDto.getName() + "' уже существует");
         }
 
@@ -83,7 +83,7 @@ public class DishServiceImpl implements DishService {
     public ResponseDishDto updateDish(Long dishId, UpdateDishDto updateDishDto) {
         Dish dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new NotFoundException("Блюдо с id=" + dishId + " не найдено"));
-        if (updateDishDto.getName() != null && dishRepository.existsByNameAndIdNot(updateDishDto.getName(), dishId)) {
+        if (updateDishDto.getName() != null && dishRepository.existsByNameIgnoreCaseAndIdNot(updateDishDto.getName(), dishId)) {
             throw new AlreadyExistsException("Блюдо с названием '" + updateDishDto.getName() + "' уже существует");
         }
 

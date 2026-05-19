@@ -23,7 +23,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -41,19 +45,32 @@ public class OrderServiceImpl implements OrderService {
         Client client = clientRepository.findById(dto.getClientId())
                 .orElseThrow(() -> new NotFoundException("Клиент не найден: " + dto.getClientId()));
 
-        List<Dish> dishes = dishRepository.findAllById(dto.getDishIds());
-        if (dishes.size() != dto.getDishIds().size()) {
+        List<Long> dishIds = dto.getDishIds();
+        List<Long> uniqueIds = dishIds.stream().distinct().toList();
+        Map<Long, Dish> dishMap = dishRepository.findAllById(uniqueIds).stream()
+                .collect(Collectors.toMap(Dish::getId, Function.identity()));
+        if (dishMap.size() != uniqueIds.size()) {
             throw new NotFoundException("Некоторые блюда не найдены");
         }
 
-        Order order = orderMapper.toEntity(dto);
-        order.setClient(client);
-        order.getDishes().addAll(dishes);
-        order.setStatus(OrderStatus.CART);
-        order.setTotalPrice(dishes.stream()
+        // Цену считаем по полному списку (с учётом количества каждого блюда)
+        int totalPrice = dishIds.stream()
+                .map(dishMap::get)
                 .filter(d -> d.getPrice() != null)
                 .mapToInt(Dish::getPrice)
-                .sum());
+                .sum();
+
+        // В ManyToMany join-таблицу записываем только уникальные блюда
+        // (повторная пара order_id+dish_id нарушает PK-ограничение таблицы)
+        List<Dish> uniqueDishes = uniqueIds.stream()
+                .map(dishMap::get)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        Order order = orderMapper.toEntity(dto);
+        order.setClient(client);
+        order.getDishes().addAll(uniqueDishes);
+        order.setStatus(OrderStatus.CART);
+        order.setTotalPrice(totalPrice);
 
         return orderMapper.toResponseDto(orderRepository.save(order));
     }

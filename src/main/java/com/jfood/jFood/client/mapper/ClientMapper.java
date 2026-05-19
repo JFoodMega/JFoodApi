@@ -14,7 +14,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public interface ClientMapper {
     Client mapCreateClientDtoToClient(CreateClientDto createClientDto);
 
-    @Mapping(target = "ordersCount", expression = "java(client.getOrders().size())")
+    @Mapping(target = "ordersCount", ignore = true)
     ResponseClientDto mapClientToResponseClientDto(Client client);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

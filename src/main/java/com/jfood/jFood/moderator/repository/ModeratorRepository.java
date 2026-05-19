@@ -7,5 +7,13 @@ import java.util.Optional;
 
 public interface ModeratorRepository extends JpaRepository<Moderator, Long> {
     Optional<Moderator> findByLogin(String login);
+
+    boolean existsByLogin(String login);
+
+    boolean existsByPhone(String phone);
+
+    boolean existsByLoginAndIdNot(String login, Long id);
+
+    boolean existsByPhoneAndIdNot(String phone, Long id);
 }
 

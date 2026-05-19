@@ -12,7 +12,7 @@ import java.util.List;
 public interface DishService {
     ResponseDishDto createDish(CreateDishDto createDishDto);
 
-    List<ResponseDishDto> getDishes(CuisineType cuisineType, DishType dishType, String name);
+    List<ResponseDishDto> getDishes(CuisineType cuisineType, DishType dishType, String name, boolean includeInactive);
 
     ResponseDishDto getDishById(Long dishId);
 

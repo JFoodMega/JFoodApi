@@ -21,7 +21,11 @@ OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findByStatusIn(List<OrderStatus> statuses, Pageable pageable);
 
+    long countByClientId(Long clientId);
+
     int countByCourierIdAndStatus(Long courierId, OrderStatus status);
+
+    int countByCourierIdAndStatusAndUpdatedAtAfter(Long courierId, OrderStatus status, java.time.LocalDateTime after);
 
     Page<Order> findByCourierId(Long courierId, Pageable pageable);
 }

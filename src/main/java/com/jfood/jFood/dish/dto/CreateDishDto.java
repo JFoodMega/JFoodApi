@@ -22,7 +22,6 @@ public class CreateDishDto {
     @Positive
     private Integer price;
 
-    @NotBlank
     private String description;
 
     @NotBlank

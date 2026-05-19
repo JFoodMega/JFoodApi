@@ -10,9 +10,14 @@ import org.mapstruct.Mapping;
 public interface OrderMapper {
 
     @Mapping(target = "clientId", source = "client.id")
+    @Mapping(target = "clientName", source = "client.name")
+    @Mapping(target = "clientPhone", source = "client.phone")
+    @Mapping(target = "clientLogin", source = "client.login")
     @Mapping(target = "courierId", source = "courier.id")
+    @Mapping(target = "courierName", source = "courier.name")
     @Mapping(target = "moderatorId", source = "moderator.id")
     @Mapping(target = "addressId", source = "address.id")
+    @Mapping(target = "addressLine", expression = "java(order.getAddress() != null ? order.getAddress().getCity() + \", \" + order.getAddress().getStreet() + \", \" + order.getAddress().getHouse() : null)")
     ResponseOrderDto toResponseDto(Order order);
 
     @Mapping(target = "id", ignore = true)

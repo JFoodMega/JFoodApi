@@ -14,7 +14,11 @@ import java.util.List;
 public class ResponseOrderDto {
     private Long id;
     private Long clientId;
+    private String clientName;
+    private String clientPhone;
+    private String clientLogin;
     private Long courierId;
+    private String courierName;
     private Long moderatorId;
     private OrderStatus status;
     private Integer totalPrice;
@@ -24,5 +28,6 @@ public class ResponseOrderDto {
     private LocalDateTime deliveryTime;
     private DeliveryType deliveryType;
     private Long addressId;
+    private String addressLine;
     private List<ResponseDishDto> dishes;
 }

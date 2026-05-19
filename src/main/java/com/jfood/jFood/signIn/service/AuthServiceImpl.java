@@ -9,13 +9,14 @@ import com.jfood.jFood.courier.repository.CourierRepository;
 import com.jfood.jFood.moderator.mapper.ModeratorMapper;
 import com.jfood.jFood.moderator.model.Moderator;
 import com.jfood.jFood.moderator.repository.ModeratorRepository;
+import com.jfood.jFood.exception.NotFoundException;
 import com.jfood.jFood.signIn.dto.LoginRequestDto;
 import com.jfood.jFood.signIn.dto.LoginResponseDto;
 import com.jfood.jFood.signIn.dto.Role;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -37,6 +38,7 @@ public class AuthServiceImpl implements AuthService {
     private String adminPassword;
 
     @Override
+    @Transactional(readOnly = true)
     public LoginResponseDto login(LoginRequestDto dto) {
 
         if (dto.getLogin().equals(adminLogin)) {
@@ -70,6 +72,6 @@ public class AuthServiceImpl implements AuthService {
             return new LoginResponseDto(Role.MODERATOR, moderatorMapper.toResponseDto(moderator.get()));
         }
 
-        throw new EntityNotFoundException("Пользователь не найден");
+        throw new NotFoundException("Пользователь с логином «" + dto.getLogin() + "» не найден");
     }
 }

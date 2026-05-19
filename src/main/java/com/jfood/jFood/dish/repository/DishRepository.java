@@ -30,9 +30,11 @@ public interface DishRepository extends JpaRepository<Dish, Long> {
             """)
     List<Dish> findAllIncludingInactive(@Param("name") String name);
 
-    boolean existsByName(String name);
+    @Query("SELECT COUNT(d) > 0 FROM Dish d WHERE LOWER(d.name) = LOWER(:name)")
+    boolean existsByNameIgnoreCase(@Param("name") String name);
 
-    boolean existsByNameAndIdNot(String name, Long id);
+    @Query("SELECT COUNT(d) > 0 FROM Dish d WHERE LOWER(d.name) = LOWER(:name) AND d.id <> :id")
+    boolean existsByNameIgnoreCaseAndIdNot(@Param("name") String name, @Param("id") Long id);
 
     @Query("SELECT COUNT(o) > 0 FROM Order o JOIN o.dishes d WHERE d.id = :dishId")
     boolean isUsedInOrders(@Param("dishId") Long dishId);

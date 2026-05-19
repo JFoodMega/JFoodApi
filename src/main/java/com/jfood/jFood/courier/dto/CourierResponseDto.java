@@ -12,4 +12,6 @@ public class CourierResponseDto {
     private Boolean isAvailable;
     private Integer totalDeliveries;
     private Integer totalEarnings;
+    private Integer todayDeliveries;
+    private Integer todayEarnings;
 }
