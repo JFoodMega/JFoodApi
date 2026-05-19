@@ -70,8 +70,9 @@ public class DishServiceImpl implements DishService {
 
         if (dishRepository.isUsedInOrders(dishId)) {
             // Блюдо входит в заказы — физическое удаление невозможно,
-            // деактивируем вместо этого чтобы сохранить историю заказов
+            // помечаем как удалённое и скрытое, чтобы сохранить историю заказов
             dish.setIsActive(false);
+            dish.setIsDeleted(true);
             dishRepository.save(dish);
         } else {
             dishRepository.delete(dish);

@@ -11,6 +11,9 @@ CREATE TABLE IF NOT EXISTS "clients" (
 -- Add photo_url to existing databases that were created without this column
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS photo_url VARCHAR(500);
 
+-- Soft-delete flag for dishes (separate from is_active which is a manual hide toggle)
+ALTER TABLE dishes ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN NOT NULL DEFAULT false;
+
 -- Make city and house optional in addresses (previously required)
 ALTER TABLE addresses ALTER COLUMN city DROP NOT NULL;
 ALTER TABLE addresses ALTER COLUMN house DROP NOT NULL;

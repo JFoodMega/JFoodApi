@@ -14,6 +14,7 @@ public interface DishRepository extends JpaRepository<Dish, Long> {
     @Query("""
             SELECT d FROM Dish d
             WHERE d.isActive = true
+            AND d.isDeleted = false
             AND (:#{#cuisineType} IS NULL OR d.cuisineType = :#{#cuisineType})
             AND (:#{#dishType} IS NULL OR d.dishType = :#{#dishType})
             AND (:name IS NULL OR LOWER(d.name) LIKE LOWER(CONCAT('%', CAST(:name AS string), '%')))
@@ -25,15 +26,16 @@ public interface DishRepository extends JpaRepository<Dish, Long> {
 
     @Query("""
             SELECT d FROM Dish d
-            WHERE (:name IS NULL OR LOWER(d.name) LIKE LOWER(CONCAT('%', CAST(:name AS string), '%')))
+            WHERE d.isDeleted = false
+            AND (:name IS NULL OR LOWER(d.name) LIKE LOWER(CONCAT('%', CAST(:name AS string), '%')))
             ORDER BY d.id DESC
             """)
     List<Dish> findAllIncludingInactive(@Param("name") String name);
 
-    @Query("SELECT COUNT(d) > 0 FROM Dish d WHERE LOWER(d.name) = LOWER(:name)")
+    @Query("SELECT COUNT(d) > 0 FROM Dish d WHERE LOWER(d.name) = LOWER(:name) AND d.isDeleted = false")
     boolean existsByNameIgnoreCase(@Param("name") String name);
 
-    @Query("SELECT COUNT(d) > 0 FROM Dish d WHERE LOWER(d.name) = LOWER(:name) AND d.id <> :id")
+    @Query("SELECT COUNT(d) > 0 FROM Dish d WHERE LOWER(d.name) = LOWER(:name) AND d.id <> :id AND d.isDeleted = false")
     boolean existsByNameIgnoreCaseAndIdNot(@Param("name") String name, @Param("id") Long id);
 
     @Query("SELECT COUNT(o) > 0 FROM Order o JOIN o.dishes d WHERE d.id = :dishId")

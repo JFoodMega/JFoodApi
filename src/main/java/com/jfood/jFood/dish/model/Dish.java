@@ -51,4 +51,8 @@ public class Dish {
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
+
+    /** true — блюдо удалено администратором и не отображается в списке */
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
 }
