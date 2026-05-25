@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class CourierResponseDto {
     private Long id;
+    private String login;
     private String name;
     private String phone;
     private Boolean isAvailable;
